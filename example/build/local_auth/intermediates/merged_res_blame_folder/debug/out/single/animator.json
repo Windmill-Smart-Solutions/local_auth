@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/jacobvyynyk/Projects/local_auth/example/build/local_auth/intermediates/res/merged/debug/animator/fragment_fade_exit.xml",
+        "source": "/Users/jacobvyynyk/.gradle/caches/transforms-2/files-2.1/db9e23954b332c6c94302605586c4a19/fragment-1.3.2/res/animator/fragment_fade_exit.xml"
+    },
+    {
+        "merged": "/Users/jacobvyynyk/Projects/local_auth/example/build/local_auth/intermediates/res/merged/debug/animator/fragment_fade_enter.xml",
+        "source": "/Users/jacobvyynyk/.gradle/caches/transforms-2/files-2.1/db9e23954b332c6c94302605586c4a19/fragment-1.3.2/res/animator/fragment_fade_enter.xml"
+    },
+    {
+        "merged": "/Users/jacobvyynyk/Projects/local_auth/example/build/local_auth/intermediates/res/merged/debug/animator/fragment_close_exit.xml",
+        "source": "/Users/jacobvyynyk/.gradle/caches/transforms-2/files-2.1/db9e23954b332c6c94302605586c4a19/fragment-1.3.2/res/animator/fragment_close_exit.xml"
+    },
+    {
+        "merged": "/Users/jacobvyynyk/Projects/local_auth/example/build/local_auth/intermediates/res/merged/debug/animator/fragment_open_enter.xml",
+        "source": "/Users/jacobvyynyk/.gradle/caches/transforms-2/files-2.1/db9e23954b332c6c94302605586c4a19/fragment-1.3.2/res/animator/fragment_open_enter.xml"
+    },
+    {
+        "merged": "/Users/jacobvyynyk/Projects/local_auth/example/build/local_auth/intermediates/res/merged/debug/animator/fragment_open_exit.xml",
+        "source": "/Users/jacobvyynyk/.gradle/caches/transforms-2/files-2.1/db9e23954b332c6c94302605586c4a19/fragment-1.3.2/res/animator/fragment_open_exit.xml"
+    },
+    {
+        "merged": "/Users/jacobvyynyk/Projects/local_auth/example/build/local_auth/intermediates/res/merged/debug/animator/fragment_close_enter.xml",
+        "source": "/Users/jacobvyynyk/.gradle/caches/transforms-2/files-2.1/db9e23954b332c6c94302605586c4a19/fragment-1.3.2/res/animator/fragment_close_enter.xml"
+    }
+]

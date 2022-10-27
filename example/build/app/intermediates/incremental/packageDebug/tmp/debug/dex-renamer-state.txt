@@ -1,0 +1,4 @@
+#Thu Oct 27 09:48:08 EEST 2022
+base.0=/Users/jacobvyynyk/Projects/local_auth/example/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
