@@ -140,8 +140,7 @@ class LocalAuthentication {
   ///
   /// Returns a [Future] bool true or false:
   Future<bool> get canCheckBiometrics async =>
-      (await _channel.invokeListMethod<String>('getAvailableBiometrics'))!
-          .isNotEmpty;
+      (await _channel.invokeMethod<bool>('canCheckBiometrics')) ?? false;
 
   /// Returns true if device is capable of checking biometrics or is able to
   /// fail over to device credentials.
