@@ -102,7 +102,10 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
         authenticate(call, result);
         break;
       case "getAvailableBiometrics":
-        getAvailableBiometrics(result);
+            getAvailableBiometrics(result);
+            break;
+      case "canCheckBiometrics":
+          result.success(canAuthenticateWithBiometrics());
         break;
       case "isDeviceSupported":
         isDeviceSupported(result);
