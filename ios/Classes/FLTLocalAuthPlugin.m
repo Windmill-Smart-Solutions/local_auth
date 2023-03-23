@@ -119,7 +119,7 @@
 }
 
 - (void)canCheckBiometrics:(FlutterResult)result {
-    [self getAvailableBiometrics: ^(id *availableBiometrics) {
+    [self getAvailableBiometrics: ^(NSArray<NSString *> *availableBiometrics) {
         LAContext *context = self.createAuthContext;
         LABiometryType type = [context biometryType];
         NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
