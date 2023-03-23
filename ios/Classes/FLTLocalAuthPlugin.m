@@ -121,7 +121,6 @@
 - (void)canCheckBiometrics:(FlutterResult)result {
     LAContext *context = self.createAuthContext;
     NSError *authError = nil;
-    NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
     BOOL canEvaluatePolicy = [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&authError];
     LABiometryType type = [context biometryType];
     NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
