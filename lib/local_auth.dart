@@ -9,8 +9,6 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:async';
-import 'dart:io' as io;
-
 
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
@@ -142,13 +140,7 @@ class LocalAuthentication {
   ///
   /// Returns a [Future] bool true or false:
   Future<bool> get canCheckBiometrics async {
-    if (io.Platform.isIOS) {
-      return (await _channel
-              .invokeListMethod<String>('getAvailableBiometrics'))!
-          .isNotEmpty;
-    } else {
-      return (await _channel.invokeMethod<bool>('canCheckBiometrics')) ?? false;
-    }
+    return (await _channel.invokeMethod<bool>('canCheckBiometrics')) ?? false;
   }
 
   /// Returns true if device is capable of checking biometrics or is able to

@@ -38,7 +38,9 @@
   } else if ([@"getAvailableBiometrics" isEqualToString:call.method]) {
     [self getAvailableBiometrics:result];
   } else if ([@"isDeviceSupported" isEqualToString:call.method]) {
-    result(@YES);
+      result(@YES);
+  } else if [@"canCheckBiometrics" isEqualToString:call.method] {
+      [self canCheckBiometrics:result];
   } else {
     result(FlutterMethodNotImplemented);
   }
@@ -114,6 +116,22 @@
     [biometrics addObject:@"undefined"];
   }
   result(biometrics);
+}
+
+- (void)canCheckBiometrics:(FlutterResult)result {
+    [self getAvailableBiometrics: ^(id *availableBiometrics) {
+        LAContext *context = self.createAuthContext;
+        LABiometryType type = [context biometryType];
+        NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
+        [biometrics addObjectsFromArray:availableBiometrics];
+        if (type == LABiometryTypeTouchID && ![biometrics containsObject:@"fingerprint"]) {
+            [biometrics addObject:@"fingerprint"];
+        }
+        if (type == LABiometryTypeFaceID && ![biometrics containsObject:@"face"]) {
+            [biometrics addObject:@"face"];
+        }
+        result(biometrics);
+    }];
 }
 
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
