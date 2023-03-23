@@ -133,7 +133,7 @@
     if (canEvaluatePolicy && authError == nil && [biometrics count] == 0) {
         [biometrics addObject:@"fingerprint"];
     }
-    result(biometrics);
+    result([biometrics count] != 0);
 }
 
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
