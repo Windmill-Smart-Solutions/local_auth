@@ -131,7 +131,7 @@
     if (type == LABiometryTypeFaceID) {
         [biometrics addObject:@"face"];
     }
-    if (canEvaluatePolicy && authError == nil && biometrics.isEmpty) {
+    if (canEvaluatePolicy && authError == nil && [biometrics count] == 0) {
         [biometrics addObject:@"fingerprint"];
     }
     result(biometrics);
