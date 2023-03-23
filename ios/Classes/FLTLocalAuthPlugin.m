@@ -39,7 +39,7 @@
     [self getAvailableBiometrics:result];
   } else if ([@"isDeviceSupported" isEqualToString:call.method]) {
       result(@YES);
-  } else if [@"canCheckBiometrics" isEqualToString:call.method] {
+  } else if ([@"canCheckBiometrics" isEqualToString:call.method]) {
       [self canCheckBiometrics:result];
   } else {
     result(FlutterMethodNotImplemented);
