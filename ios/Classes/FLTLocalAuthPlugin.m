@@ -119,19 +119,22 @@
 }
 
 - (void)canCheckBiometrics:(FlutterResult)result {
-    [self getAvailableBiometrics: ^(NSArray<NSString *> *availableBiometrics) {
-        LAContext *context = self.createAuthContext;
-        LABiometryType type = [context biometryType];
-        NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
-        [biometrics addObjectsFromArray:availableBiometrics];
-        if (type == LABiometryTypeTouchID && ![biometrics containsObject:@"fingerprint"]) {
-            [biometrics addObject:@"fingerprint"];
-        }
-        if (type == LABiometryTypeFaceID && ![biometrics containsObject:@"face"]) {
-            [biometrics addObject:@"face"];
-        }
-        result(biometrics);
-    }];
+    LAContext *context = self.createAuthContext;
+    NSError *authError = nil;
+    NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
+    BOOL canEvaluatePolicy = [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&authError];
+    LABiometryType type = [context biometryType];
+    NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
+    if (type == LABiometryTypeTouchID) {
+        [biometrics addObject:@"fingerprint"];
+    }
+    if (type == LABiometryTypeFaceID) {
+        [biometrics addObject:@"face"];
+    }
+    if (canEvaluatePolicy && authError == nil && biometrics.isEmpty) {
+        [biometrics addObject:@"fingerprint"];
+    }
+    result(biometrics);
 }
 
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
