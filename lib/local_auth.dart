@@ -11,7 +11,6 @@
 import 'dart:async';
 import 'dart:io' as io;
 
-
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
@@ -123,7 +122,11 @@ class LocalAuthentication {
         details: 'Your operating system is ${_platform.operatingSystem}',
       );
     }
-    return (await _channel.invokeMethod<bool>('authenticate', args)) ?? false;
+    try {
+      return (await _channel.invokeMethod<bool>('authenticate', args)) ?? false;
+    } on PlatformException {
+      rethrow;
+    }
   }
 
   /// Returns true if auth was cancelled successfully.

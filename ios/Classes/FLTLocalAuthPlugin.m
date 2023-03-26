@@ -88,7 +88,7 @@
                 }];
     [alert addAction:additionalAction];
   }
-  [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:alert
+  [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert
                                                                                      animated:YES
                                                                                    completion:nil];
 }
@@ -202,7 +202,7 @@
                  firstButton:arguments[@"okButton"]
                flutterResult:result
             additionalButton:arguments[@"goToSetting"]];
-        return;
+        break;
       }
       errorCode = authError.code == LAErrorPasscodeNotSet ? @"PasscodeNotSet" : @"NotEnrolled";
       break;
@@ -211,7 +211,7 @@
                firstButton:arguments[@"okButton"]
              flutterResult:result
           additionalButton:nil];
-      return;
+      break;
   }
   result([FlutterError errorWithCode:errorCode
                              message:authError.localizedDescription
