@@ -9,8 +9,6 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:async';
-import 'dart:io' as io;
-
 
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
@@ -123,7 +121,11 @@ class LocalAuthentication {
         details: 'Your operating system is ${_platform.operatingSystem}',
       );
     }
-    return (await _channel.invokeMethod<bool>('authenticate', args)) ?? false;
+    try {
+      return (await _channel.invokeMethod<bool>('authenticate', args)) ?? false;
+    } on PlatformException {
+      rethrow;
+    }
   }
 
   /// Returns true if auth was cancelled successfully.
@@ -142,7 +144,7 @@ class LocalAuthentication {
   ///
   /// Returns a [Future] bool true or false:
   Future<bool> get canCheckBiometrics async {
-    if (io.Platform.isIOS) {
+    if (_platform.isIOS) {
       return (await _channel
               .invokeListMethod<String>('getAvailableBiometrics'))!
           .isNotEmpty;
