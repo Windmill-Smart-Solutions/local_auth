@@ -171,6 +171,28 @@ class LocalAuthentication {
           'getAvailableBiometrics',
         )) ??
         <String>[];
+    return _mapRawToBiometricType(result);
+  }
+
+  /// Returns a list of all supported biometrics by hardware
+  /// (even though they could not be accessibly by software)
+  ///
+  /// Returns a [Future] List<BiometricType> with the following possibilities:
+  /// - BiometricType.face
+  /// - BiometricType.fingerprint
+  /// - BiometricType.iris (not yet implemented)
+  Future<List<BiometricType>> getAllBiometrics() async {
+    if (_platform.isIOS) {
+      final List<String> result =
+          (await _channel.invokeListMethod<String>('getAllBiometrics')) ??
+              <String>[];
+      return _mapRawToBiometricType(result);
+    } else {
+      return await getAvailableBiometrics();
+    }
+  }
+
+  List<BiometricType> _mapRawToBiometricType(List<String> result) {
     final List<BiometricType> biometrics = <BiometricType>[];
     for (final String value in result) {
       switch (value) {

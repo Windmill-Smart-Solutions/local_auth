@@ -37,6 +37,8 @@
     }
   } else if ([@"getAvailableBiometrics" isEqualToString:call.method]) {
     [self getAvailableBiometrics:result];
+  } else if ([@"getAllBiometrics" isEqualToString:call.method]) {
+    [self getAllBiometrics:result];
   } else if ([@"isDeviceSupported" isEqualToString:call.method]) {
     result(@YES);
   } else {
@@ -91,6 +93,29 @@
   [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert
                                                                                      animated:YES
                                                                                    completion:nil];
+}
+
+- (void)getAllBiometrics:(FlutterResult)result {
+    LAContext *context = self.createAuthContext;
+    NSError *authError = nil;
+    BOOL canEvaluate = [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&authError];
+    NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
+    switch (context.biometryType) {
+        case LABiometryTypeTouchID:
+            [biometrics addObject:@"fingerprint"];
+            break;
+        case LABiometryTypeFaceID:
+            [biometrics addObject:@"face"];
+            break;
+        default:
+            if (canEvaluate && authError == nil) {
+                [biometrics addObject:@"fingerprint"];
+            } else if (authError.code == LAErrorBiometryNotEnrolled) {
+                [biometrics addObject:@"undefined"];
+            }
+            break;
+    }
+    result(biometrics);
 }
 
 - (void)getAvailableBiometrics:(FlutterResult)result {
@@ -224,13 +249,18 @@
     withFlutterResult:(FlutterResult)result {
   NSString *errorCode = @"NotAvailable";
   switch (authError.code) {
+    case LAErrorBiometryNotAvailable:
     case LAErrorPasscodeNotSet:
     case LAErrorBiometryNotEnrolled:
-      [self alertMessage:arguments[@"goToSettingDescriptionIOS"]
-                   firstButton:arguments[@"okButton"]
-                 flutterResult:result
-              additionalButton:arguments[@"goToSetting"]];
-      return;
+          if ([arguments[@"useErrorDialogs"] boolValue]) {
+              [self alertMessage:arguments[@"goToSettingDescriptionIOS"]
+                     firstButton:arguments[@"okButton"]
+                   flutterResult:result
+                additionalButton:arguments[@"goToSetting"]];
+              return;
+          } else {
+              break;
+          }
     case LAErrorBiometryLockout:
       [self alertMessage:arguments[@"lockOut"]
                firstButton:arguments[@"okButton"]
