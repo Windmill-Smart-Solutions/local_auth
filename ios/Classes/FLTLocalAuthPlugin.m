@@ -116,6 +116,32 @@
   result(biometrics);
 }
 
+- (void)handleBiometricsAuthError:(NSError *)authError
+                  flutterArguments:(NSDictionary *)arguments
+                     flutterResult:(FlutterResult)result
+                     context: (LAContext *)context {
+  switch (authError.code) {
+      case LAErrorAuthenticationFailed:
+      case LAErrorBiometryLockout:
+          if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError] && authError == nil) {
+              [context evaluatePolicy:LAPolicyDeviceOwnerAuthentication
+                      localizedReason:arguments[@"localizedReason"]
+                                reply:^(BOOL success, NSError *error) {
+                  dispatch_async(dispatch_get_main_queue(), ^{
+                      if (success && error == nil) {
+                          [self authenticateWithBiometrics:arguments withFlutterResult:result];
+                      } else {
+                          [self handleErrors:authError flutterArguments:arguments withFlutterResult:result];
+                      }
+                  });
+              }];
+              break;
+          }
+      default:
+          [self handleErrors:authError flutterArguments:arguments withFlutterResult:result];
+  }
+}
+
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
                  withFlutterResult:(FlutterResult)result {
   LAContext *context = self.createAuthContext;
@@ -124,20 +150,23 @@
   self.lastResult = nil;
   context.localizedFallbackTitle = @"";
 
-  if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
-                           error:&authError]) {
+  if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&authError] && authError == nil) {
     [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
             localizedReason:arguments[@"localizedReason"]
                       reply:^(BOOL success, NSError *error) {
                         dispatch_async(dispatch_get_main_queue(), ^{
-                          [self handleAuthReplyWithSuccess:success
-                                                     error:error
-                                          flutterArguments:arguments
-                                             flutterResult:result];
+                            if (success && error == nil) {
+                                [self handleAuthReplyWithSuccess:success
+                                                           error:error
+                                                flutterArguments:arguments
+                                                   flutterResult:result];
+                            } else {
+                                [self handleBiometricsAuthError:error flutterArguments:arguments flutterResult:result context:context];
+                            }
                         });
                       }];
   } else {
-    [self handleErrors:authError flutterArguments:arguments withFlutterResult:result];
+      [self handleBiometricsAuthError:authError flutterArguments:arguments flutterResult:result context:context];
   }
 }
 
@@ -174,9 +203,9 @@
   } else {
     switch (error.code) {
       case LAErrorPasscodeNotSet:
-      case LAErrorTouchIDNotAvailable:
-      case LAErrorTouchIDNotEnrolled:
-      case LAErrorTouchIDLockout:
+      case LAErrorBiometryNotAvailable:
+      case LAErrorBiometryNotEnrolled:
+      case LAErrorBiometryLockout:
         [self handleErrors:error flutterArguments:arguments withFlutterResult:result];
         return;
       case LAErrorSystemCancel:
@@ -196,22 +225,18 @@
   NSString *errorCode = @"NotAvailable";
   switch (authError.code) {
     case LAErrorPasscodeNotSet:
-    case LAErrorTouchIDNotEnrolled:
-      if ([arguments[@"useErrorDialogs"] boolValue]) {
-        [self alertMessage:arguments[@"goToSettingDescriptionIOS"]
-                 firstButton:arguments[@"okButton"]
-               flutterResult:result
-            additionalButton:arguments[@"goToSetting"]];
-        break;
-      }
-      errorCode = authError.code == LAErrorPasscodeNotSet ? @"PasscodeNotSet" : @"NotEnrolled";
-      break;
-    case LAErrorTouchIDLockout:
+    case LAErrorBiometryNotEnrolled:
+      [self alertMessage:arguments[@"goToSettingDescriptionIOS"]
+                   firstButton:arguments[@"okButton"]
+                 flutterResult:result
+              additionalButton:arguments[@"goToSetting"]];
+      return;
+    case LAErrorBiometryLockout:
       [self alertMessage:arguments[@"lockOut"]
                firstButton:arguments[@"okButton"]
              flutterResult:result
           additionalButton:nil];
-      break;
+      return;
   }
   result([FlutterError errorWithCode:errorCode
                              message:authError.localizedDescription
