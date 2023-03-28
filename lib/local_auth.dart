@@ -9,7 +9,6 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:async';
-import 'dart:io' as io;
 
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
@@ -145,7 +144,7 @@ class LocalAuthentication {
   ///
   /// Returns a [Future] bool true or false:
   Future<bool> get canCheckBiometrics async {
-    if (io.Platform.isIOS) {
+    if (_platform.isIOS) {
       return (await _channel
               .invokeListMethod<String>('getAvailableBiometrics'))!
           .isNotEmpty;
@@ -172,6 +171,28 @@ class LocalAuthentication {
           'getAvailableBiometrics',
         )) ??
         <String>[];
+    return _mapRawToBiometricType(result);
+  }
+
+  /// Returns a list of all supported biometrics by hardware
+  /// (even though they could not be accessibly by software)
+  ///
+  /// Returns a [Future] List<BiometricType> with the following possibilities:
+  /// - BiometricType.face
+  /// - BiometricType.fingerprint
+  /// - BiometricType.iris (not yet implemented)
+  Future<List<BiometricType>> getAllBiometrics() async {
+    if (_platform.isIOS) {
+      final List<String> result =
+          (await _channel.invokeListMethod<String>('getAllBiometrics')) ??
+              <String>[];
+      return _mapRawToBiometricType(result);
+    } else {
+      return await getAvailableBiometrics();
+    }
+  }
+
+  List<BiometricType> _mapRawToBiometricType(List<String> result) {
     final List<BiometricType> biometrics = <BiometricType>[];
     for (final String value in result) {
       switch (value) {
