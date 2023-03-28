@@ -145,9 +145,7 @@ class LocalAuthentication {
   /// Returns a [Future] bool true or false:
   Future<bool> get canCheckBiometrics async {
     if (_platform.isIOS) {
-      return (await _channel
-              .invokeListMethod<String>('getAvailableBiometrics'))!
-          .isNotEmpty;
+      return (await getAllBiometrics())?.isNotEmpty ?? false;
     } else {
       return (await _channel.invokeMethod<bool>('canCheckBiometrics')) ?? false;
     }
