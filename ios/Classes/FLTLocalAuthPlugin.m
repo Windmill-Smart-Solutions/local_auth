@@ -65,6 +65,7 @@
          firstButton:(NSString *)firstButton
        flutterResult:(FlutterResult)result
     additionalButton:(NSString *)secondButton {
+    LAContext *context = self.createAuthContext;
   UIAlertController *alert =
       [UIAlertController alertControllerWithTitle:@""
                                           message:message
