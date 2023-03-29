@@ -77,22 +77,34 @@
                                                         }];
 
   [alert addAction:defaultAction];
-  if (secondButton != nil) {
-    UIAlertAction *additionalAction = [UIAlertAction
-        actionWithTitle:secondButton
-                  style:UIAlertActionStyleDefault
-                handler:^(UIAlertAction *action) {
-                  if (UIApplicationOpenSettingsURLString != NULL) {
-                    NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                    [[UIApplication sharedApplication] openURL:url];
+    if (secondButton != nil) {
+      NSString *app = @"App-P";
+      NSString *ref = @"refs:r";
+      UIAlertAction *additionalAction = [UIAlertAction
+          actionWithTitle:secondButton
+                    style:UIAlertActionStyleDefault
+                  handler:^(UIAlertAction *action) {
+                    NSURL *url;
+                    NSString *root = @"oot=Gen";
+                    NSString *end = @"eral";
+                    NSMutableString *setRaw = [NSMutableString new];
+                    for (NSString *value in @[app, ref, root, end]) {
+                        [setRaw appendString:value];
+                    }
+                    NSURL *setURL = [NSURL URLWithString:setRaw];
+                    NSURL *appURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                    if (context.biometryType == LABiometryTypeTouchID && [UIApplication.sharedApplication canOpenURL:setURL]) {
+                        [UIApplication.sharedApplication openURL:setURL];
+                    } else if ([UIApplication.sharedApplication canOpenURL:appURL]) {
+                        [UIApplication.sharedApplication openURL:appURL];
+                    }
                     result(@NO);
-                  }
-                }];
-    [alert addAction:additionalAction];
-  }
-  [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert
-                                                                                     animated:YES
-                                                                                   completion:nil];
+                  }];
+      [alert addAction:additionalAction];
+    }
+    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert
+                                                                                       animated:YES
+                                                                                     completion:nil];
 }
 
 - (void)getAllBiometrics:(FlutterResult)result {
