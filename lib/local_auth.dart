@@ -158,7 +158,7 @@ class LocalAuthentication {
   Future<bool> isDeviceSupported() async =>
       (await _channel.invokeMethod<bool>('isDeviceSupported')) ?? false;
 
-  /// Returns a list of enrolled biometrics
+  /// Returns a list of enrolled & available biometrics
   ///
   /// Returns a [Future] List<BiometricType> with the following possibilities:
   /// - BiometricType.face
@@ -170,6 +170,23 @@ class LocalAuthentication {
         )) ??
         <String>[];
     return _mapRawToBiometricType(result);
+  }
+
+  /// Returns a list of enrolled biometrics
+  ///
+  /// Returns a [Future] List<BiometricType> with the following possibilities:
+  /// - BiometricType.face
+  /// - BiometricType.fingerprint
+  /// - BiometricType.iris (not yet implemented)
+  Future<List<BiometricType>> getEnrolledBiometrics() async {
+    if (_platform.isIOS) {
+      final List<String> result =
+          (await _channel.invokeListMethod<String>('getEnrolledBiometrics')) ??
+              <String>[];
+      return _mapRawToBiometricType(result);
+    } else {
+      return await getAvailableBiometrics();
+    }
   }
 
   /// Returns a list of all supported biometrics by hardware

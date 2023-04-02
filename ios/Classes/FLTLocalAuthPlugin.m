@@ -39,6 +39,8 @@
     [self getAvailableBiometrics:result];
   } else if ([@"getAllBiometrics" isEqualToString:call.method]) {
     [self getAllBiometrics:result];
+  } else if ([@"getEnrolledBiometrics" isEqualToString:call.method]) {
+    [self getEnrolledBiometrics:result];
   } else if ([@"isDeviceSupported" isEqualToString:call.method]) {
     result(@YES);
   } else {
@@ -152,6 +154,23 @@
     [biometrics addObject:@"undefined"];
   }
   result(biometrics);
+}
+
+- (void)getEnrolledBiometrics:(FlutterResult)result {
+    LAContext *context = self.createAuthContext;
+    NSError *authError = nil;
+    BOOL canEvaluate = [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&authError];
+    NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
+    switch (authError.code) {
+      case LAErrorPasscodeNotSet:
+      case LAErrorBiometryNotAvailable:
+      case LAErrorBiometryNotEnrolled:
+        result([NSArray<NSString *> new]);
+        break;
+      default:
+        [self getAllBiometrics:result];
+        break;
+    }
 }
 
 - (void)handleBiometricsAuthError:(NSError *)authError
