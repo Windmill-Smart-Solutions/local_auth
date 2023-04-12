@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,7 +104,9 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
 
   /** Start the biometric listener. */
   void authenticate() {
-    if (lifecycle != null) {
+      Log.d("LocalAuth FACE_DEBUG", "library start authenticate");
+
+      if (lifecycle != null) {
       lifecycle.addObserver(this);
     } else {
       activity.getApplication().registerActivityLifecycleCallbacks(this);
@@ -132,6 +135,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
   @SuppressLint("SwitchIntDef")
   @Override
   public void onAuthenticationError(int errorCode, CharSequence errString) {
+    Log.d("LocalAuth FACE_DEBUG", "onAuthenticationError: " + errorCode + " " + errString);
     switch (errorCode) {
       case BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL:
         if (call.argument("useErrorDialogs")) {
@@ -156,6 +160,9 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
       case BiometricPrompt.ERROR_HW_UNAVAILABLE:
       case BiometricPrompt.ERROR_HW_NOT_PRESENT:
         completionHandler.onError("NotAvailable", "Security credentials not available.");
+        break;
+      case BiometricPrompt.ERROR_UNABLE_TO_PROCESS:
+        completionHandler.onError("CantVerifyFace", "Can’t verify face. Try again.");
         break;
       case BiometricPrompt.ERROR_LOCKOUT:
         completionHandler.onError(
