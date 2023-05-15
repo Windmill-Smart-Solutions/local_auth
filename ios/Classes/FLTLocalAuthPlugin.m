@@ -299,6 +299,12 @@
              flutterResult:result
           additionalButton:nil];
       return;
+      case LAErrorAppCancel:
+      case LAErrorSystemCancel:
+      case LAErrorUserCancel:
+      case LAErrorUserFallback:
+        result(@NO);
+        return;
   }
   result([FlutterError errorWithCode:errorCode
                              message:authError.localizedDescription
