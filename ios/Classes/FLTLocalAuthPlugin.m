@@ -303,6 +303,8 @@
       case LAErrorSystemCancel:
       case LAErrorUserCancel:
       case LAErrorUserFallback:
+      // SIGN-740 in comment
+      case 0:
         result(@NO);
         return;
   }
