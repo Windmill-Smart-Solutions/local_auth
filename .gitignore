@@ -14,3 +14,6 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+Flutter.podspec
+Generated.xcconfig
+flutter_export_environment.sh
