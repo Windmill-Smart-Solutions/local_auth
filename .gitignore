@@ -1,0 +1,16 @@
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Mac
+.DS_Store
+
+# Local configuration file (sdk path, etc)
+local.properties
